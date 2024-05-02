@@ -7,7 +7,7 @@ import { Task, TaskDocument } from './schemas/task.schema';
 export class TaskService {
     constructor(@InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>) {}
 
-    async addTask(name: string, userId: string, priority: number): Promise<TaskDocument> {
+    async addTask(name: string, userId: string, priority: number): Promise<void> {
         if (!name || !userId || priority === undefined || priority <= 0) {
             throw new BadRequestException('Invalid task payload');
         }
@@ -18,9 +18,9 @@ export class TaskService {
         }
 
         const newTask = new this.taskModel({ name, userId, priority });
-        return newTask.save();
+        newTask.save();
     }
-    
+
     async getTaskByName(name: string): Promise<TaskDocument> {
         return this.taskModel.findOne({ name }).exec();
     }

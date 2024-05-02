@@ -8,7 +8,7 @@ export class TaskController {
     constructor(private readonly taskService: TaskService) {}
 
     @Post('/')
-    async addTask(@Body('name') name: string, @Body('userId') userId: string, @Body('priority', ParseIntPipe) priority: number): Promise<TaskDocument> {
+    async addTask(@Body('name') name: string, @Body('userId') userId: string, @Body('priority', ParseIntPipe) priority: number) {
         return this.taskService.addTask(name, userId, priority);
     }
 
