@@ -29,8 +29,8 @@ export class UserService {
         return user;
     }
 
-    async resetData(): Promise<void> {
-        await this.userModel.deleteMany({}).exec();
+    async resetData(email: string): Promise<void> {
+        await this.userModel.deleteMany({email}).exec();
     }
 
     private isValidEmail(email: string): boolean {
