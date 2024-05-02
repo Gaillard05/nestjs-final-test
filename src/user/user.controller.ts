@@ -15,8 +15,8 @@ export class UserController {
         return this.userService.getUser(email);
     }
 
-    @Delete('/reset/user/:email')
-    async resetData(@Param('email') email: string)  {
-        return this.userService.resetData(email);
+    @Delete('/reset')
+    async resetData() {
+        return this.userService.resetData();
     }
 }
