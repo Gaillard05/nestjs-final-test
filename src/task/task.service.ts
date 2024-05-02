@@ -1,5 +1,4 @@
-// task.service.ts
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskDocument } from './schemas/task.schema';
@@ -10,7 +9,7 @@ export class TaskService {
 
     async addTask(name: string, userId: string, priority: number): Promise<TaskDocument> {
         if (!name || !userId || priority === undefined || priority <= 0) {
-            throw new Error('Invalid task payload');
+            throw new BadRequestException('Invalid task payload');
         }
 
         const existingTask = await this.taskModel.findOne({ name, userId }).exec();
@@ -21,7 +20,7 @@ export class TaskService {
         const newTask = new this.taskModel({ name, userId, priority });
         return newTask.save();
     }
-
+    
     async getTaskByName(name: string): Promise<TaskDocument> {
         return this.taskModel.findOne({ name }).exec();
     }
