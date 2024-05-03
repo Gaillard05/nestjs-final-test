@@ -12,7 +12,7 @@ export class TaskService {
             throw new BadRequestException('Invalid task payload');
         }
     
-        const existingTask = await this.taskModel.findOne({ name }).exec();
+        const existingTask = await this.taskModel.findOne({ name, userId }).exec();
         if (existingTask) {
             throw new ConflictException('Task with this name already exists for this user');
         }
