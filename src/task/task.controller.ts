@@ -1,7 +1,6 @@
 // task.controller.ts
-import { Controller, Post, Body, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { TaskDocument } from './schemas/task.schema';
 
 @Controller()
 export class TaskController {
@@ -13,12 +12,18 @@ export class TaskController {
     }
 
     @Get('/task')
-    async getUser(@Param('name') name: string) {
+    async getTaskByName(@Param('name') name: string) {
         return this.taskService.getTaskByName(name);
     }
 
     @Get('/user/:userId')
-    async getUserTasks(@Param('userId') userId: string): Promise<TaskDocument[]> {
-        return this.taskService.getUserTasks(userId);
+    async getUserTasks(@Param('userId') userId: string) {
+        const tasks = await this.taskService.getUserTasks(userId);
+        return { tasks }; // Retourne les tâches dans un objet
+    }
+
+    @Delete('/reset')
+    async resetData() {
+        return this.taskService.resetData();
     }
 }
