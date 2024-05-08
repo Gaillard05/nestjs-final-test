@@ -58,7 +58,9 @@ export class TaskService {
     // Méthode pour simuler la récupération des tâches depuis la base de données
     private async fetchTasksFromDatabase(userId: string): Promise<Task[]> {
         return [
-            { userId: userId, name: 'Task 1', priority: 1 }
+            { userId: userId, name: 'Task 1', priority: 1 },
+            { userId: userId, name: 'Task 2', priority: 2 },
+            { userId: userId, name: 'Task 3', priority: 3 }
         ];
     }
 
