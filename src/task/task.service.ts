@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task, TaskDocument } from './schemas/task.schema';
@@ -12,15 +12,20 @@ export class TaskService {
             throw new BadRequestException('Invalid task payload');
         }
     
-        const existingTask = await this.taskModel.findOne({ name, userId }).exec();
-        if (existingTask) {
-            throw new ConflictException('Task with this name already exists for this user');
+        let task = await this.taskModel.findOneAndUpdate(
+            { name, userId },
+            { name, userId, priority },
+            { upsert: false, new: true }
+        ).exec();
+    
+        if (!task) {
+            // Si aucune tâche n'a été mise à jour, cela signifie qu'elle n'existe pas encore, nous devons donc la créer
+            task = await new this.taskModel({ name, userId, priority }).save();
         }
     
-        const newTask = new this.taskModel({ name, userId, priority });
-        return newTask.save();
+        return task;
     }
-
+    
     async getTaskByName(name: string): Promise<Task> {
         const task = await this.taskModel.findOne({ name }).exec();
         if (!task) {
@@ -35,21 +40,10 @@ export class TaskService {
             throw new BadRequestException('Invalid userId');
         }
     
-        // Récupère les tâches associées à l'utilisateur
+        // Récupère toutes les tâches associées à l'utilisateur
         const tasks = await this.taskModel.find({ userId }).exec();
     
-        // Filtrer les tâches pour qu'elles soient uniques en fonction de leur nom
-        const uniqueTasks = [];
-        const taskNamesSet = new Set<string>();
-    
-        for (const task of tasks) {
-            if (!taskNamesSet.has(task.name)) {
-                uniqueTasks.push(task);
-                taskNamesSet.add(task.name);
-            }
-        }
-    
-        return uniqueTasks;
+        return tasks || [];
     }
 
     async resetData(): Promise<void> {

@@ -7,14 +7,13 @@ import { UserService } from './user/user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TaskController } from './task/task.controller';
 import { TaskService } from './task/task.service';
-import { AppController } from './app.controller';
 import { UserModule } from './user/user.module';
-import { AppService } from './app.service';
 import { User, UserSchema } from './user/schemas/user.schema';
+import { Task, TaskSchema } from './task/schemas/task.schema';
 
 @Module({
-    imports: [AppRoutingModule, ConfigurationModule, DatabaseModule, UserModule, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
-    controllers: [AppController, UserController],
-    providers: [AppService, UserService]
+    imports: [AppRoutingModule, ConfigurationModule, DatabaseModule, UserModule, MongooseModule.forFeature([{ name: User.name,  schema: UserSchema }, {name: Task.name,  schema: TaskSchema}])],
+    controllers: [UserController, TaskController],
+    providers: [UserService, TaskService]
 })
 export class AppModule {}
