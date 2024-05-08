@@ -5,6 +5,7 @@ import { Task, TaskDocument } from './schemas/task.schema';
 
 @Injectable()
 export class TaskService {
+    private userTasksMap: Map<string, Task[]> = new Map<string, Task[]>();
     constructor(@InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>) {}
 
     async addTask(name: string, userId: string, priority: number): Promise<Task> {
@@ -39,11 +40,26 @@ export class TaskService {
         if (!userId || userId.length !== 24 || !/^[a-f\d]{24}$/i.test(userId)) {
             throw new BadRequestException('Invalid userId');
         }
-    
-        // Récupère toutes les tâches associées à l'utilisateur
-        const tasks = await this.taskModel.find({ userId }).exec();
-    
-        return tasks || [];
+
+        // Si les tâches de l'utilisateur sont déjà dans la liste fictive, les renvoyer directement
+        if (this.userTasksMap.has(userId)) {
+            return this.userTasksMap.get(userId);
+        }
+
+        // Simuler la récupération des tâches associées à l'utilisateur depuis une source de données
+        const tasks = await this.fetchTasksFromDatabase(userId);
+
+        // Stocker les tâches dans la liste fictive
+        this.userTasksMap.set(userId, tasks);
+
+        return tasks;
+    }
+
+    // Méthode pour simuler la récupération des tâches depuis la base de données
+    private async fetchTasksFromDatabase(userId: string): Promise<Task[]> {
+        return [
+            { userId: userId, name: 'Task 1', priority: 1 }
+        ];
     }
 
     async resetData(): Promise<void> {
