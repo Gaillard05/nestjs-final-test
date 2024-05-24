@@ -8,4 +8,4 @@ npm run start:mongodb:windows
 
 # Commande pour lancer les tests
 
-npm run start:mongodb:windows
+npm run test:e2e:mongodb:windows
